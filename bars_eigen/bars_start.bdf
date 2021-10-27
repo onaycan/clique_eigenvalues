@@ -1,0 +1,36 @@
+$
+SOL 103
+$
+DIAG 8,50
+GEOMCHECK SUMMARY
+$
+CEND
+$
+TITLE = clique example
+$
+ECHO = NONE
+AUTOSPC (NOZERO)=YES
+$
+$
+   DISPLACEMENT(PLOT)=ALL
+   SPCFORCES(PLOT)=ALL
+   STRESS(PLOT)=ALL
+   STRAIN(PLOT)=ALL
+$   
+SUBCASE 991
+   SUBTITLE = Free Vibration
+   METHOD(STRUCTURE) =        4
+$
+BEGIN BULK
+$ Direct Text Input for Bulk Data
+PARAM   POST    -1
+PARAM   AUTOSPC NO
+PARAM   GRDPNT  0
+PARAM   PRTMAXIMYES
+$
+EIGRL          4                      51                            MAX
+$
+include 'bars_model.nas'
+$
+$
+ENDDATA

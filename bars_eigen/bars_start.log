@@ -1,0 +1,108 @@
+MSC.Nastran V2005.1 (Intel Linux 2.6.18-274.el5) Control File:
+-----------------------------------------------------------------
+NASTRAN OP2NEW=0 $ MSC.Nastran .lcl file
+Nastran BUFFSIZE=8193 $(/na/share/msc/conf/nast20051rc[3])
+Nastran BUFFSIZE=65537 $(command line[7])
+JID=./bars_start.bdf
+OUT=./bars_start
+MEM=262144000
+MACH='Intel'
+OPER='Linux'
+OSV='2.6.18-274.el5'
+MODEL='Intel/1200.000000MHz (linux361)'
+CONFIG=686
+NPROC=8
+symbol=DELDIR='/na/share/msc/msc20051/nast/del' $(program default)
+symbol=DEMODIR='/na/share/msc/msc20051/nast/demo' $(program default)
+symbol=SSSALTERDIR='/na/share/msc/msc20051/nast/misc/sssalter' $(program default)
+symbol=TPLDIR='/na/share/msc/msc20051/nast/tpl' $(program default)
+SDIR=/fs1/SCRATCH/can/bars_start.26390/net/netapp3/AST/1_General/8_Mitarbeiter/Can/clique/bars_eigen/bars_start.T26536_29
+DBS=/fs1/SCRATCH/can/bars_start.26390/net/netapp3/AST/1_General/8_Mitarbeiter/Can/clique/bars_eigen/bars_start.T26536_29
+SCR=yes
+NEWDEL=/na/share/msc/msc20051/linux8664/SSS
+DEL=MSCDEF
+AUTH=1700@Llic3
+AUTHQUE=1000000
+MSGCAT=/na/share/msc/msc20051/linux8664/analysis.msg
+MSGDEST='f06'
+NEWS=/na/share/msc/msc20051/nast/news.txt
+-----------------------------------------------------------------
+MSC_ISHELLPATH=.
+MSC_JIDPATH=
+PATH=/na/share/msc/msc20051/linux8664:/net/netapp/pzclmuc/bin:/net/netapp/pzclmuc/bin/lx-amd64:/na/share/LINUX/absoft/bin:/usr/lib64/qt-3.3/bin:/usr/kerberos/bin:/tmp/96022.1.NAS:/usr/local/bin:/bin:/usr/bin:/usr/X11R6/bin:/na/share/LINUX:/na/share/LINUX/fexxx:/na/share/LINUX/inka:/na/share/LINUX/public:/na/share/bin:/na/share/LINUX:/na/share/LINUX/fexxx:/na/share/LINUX/public:/na/share/bin:/na/home/opt/bin:/na/share/pelit:/na/home/can/bin:/na/share/LINUX/absoft9/bin:/na/share/LINUX/pgi-6.2.2/linux86-64/6.2/bin
+LD_LIBRARY_PATH=/na/share/msc/msc20051/linux8664
+Current Dir: /fs1/SCRATCH/can/bars_start.26390/net/netapp3/AST/1_General/8_Mitarbeiter/Can/clique/bars_eigen
+Time Cmd:    time
+Executable:  /na/share/msc/msc20051/linux8664/analysis
+MSC_MSG:     stderr
+-----------------------------------------------------------------
+Current resource limits:
+ CPU time:                       unlimited
+ Virtual address space:          unlimited
+ Working set size:               unlimited
+ Data segment size:              unlimited
+ Stack size:                     unlimited
+ Number of open files:                1024 (hard limit: 1024)
+ File size:                      unlimited
+ Core dump file size:                    0 MB
+-----------------------------------------------------------------
+System configuration:
+ Hostname:         linux361.pzs.de
+ Architecture:     linux8664
+ Platform:         Intel Linux 2.6.18-274.el5
+ Model:            Intel/1200.000000MHz
+ CPU:              GenuineIntel 
+ Clock freq.:      1200 MHz
+ Number of CPUs:   8
+ Executable:       standard
+ Raw model ID:     686
+ Config number:    686
+ Physical memory:  32114 MB
+ Numeric format:   32-bit little-endian IEEE.
+ Bytes per word:   4
+ Disk block size:  512 bytes (128 words)
+ Remote shell cmd: /na/share/msc/msc20051/linux8664/MSCRmtCmd (Windows, UNIX)
+                   /usr/kerberos/bin/rsh (UNIX)
+-----------------------------------------------------------------
+MSC.Nastran started Tue Dec 22 16:31:29 CET 2015
+ 16:31:29  Beginning Analysis
+Process Id = 26580
+
+ 16:31:29  MSC Authorization Information - System Attributes (1004, 0)
+ 16:31:29  -----------------------------------------------------------
+  Date:          Tue Dec 22 16:31:29 2015
+  MSC Id:        2c44fd0e7418 (ethernet)
+  Hostname:      linux361
+  Host Type:     Linux  Server List:   Host: Llic3  Id: n/a  Comm: 0  Port: 1700
+  License files: 1700@Llic3
+                 /na/share/LINUX/pgi5.2/license.dat
+  User:          can
+  Display:       /dev/tty
+
+ 16:31:30  MSC Authorization Information - Checkout Successful (1016, 0)
+ 16:31:30  -------------------------------------------------------------
+ 16:31:30  Acquired 250 licenses for Group CAMPUS (MSC.Nastran)
+
+ 16:31:36  Reading INCLUDE file "./bars_model.nas"
+ 16:31:36  31 records read from INCLUDE file "./bars_model.nas"
+ 16:31:36  Analysis started.
+ 16:31:36  Geometry access/verification to CAD part initiated (if needed).
+ 16:31:36  Geometry access/verification to CAD part successfully completed (if needed).
+ 16:31:36  Finite element model generation started.
+BLAS/LAPACK shared object "libmkl.so" has been loaded.
+BLAS/LAPACK shared object "MSCblaslib.so" has been loaded.
+ 16:31:36  Finite element model generated 42 degrees of freedom.
+ 16:31:36  Finite element model generation successfully completed.
+ 16:31:36  Application of Loads and Boundary Conditions to the finite element model started.
+ 16:31:36  Application of Loads and Boundary Conditions to the finite element model successfully completed.
+ 16:31:36  Solution of the system equations for normal modes started.
+ 16:31:37  Solution of the system equations for normal modes successfully completed.
+ 16:31:38  Normal modes analysis completed.
+ 16:31:38  36 records read from JID file "./bars_start.bdf"
+ 16:31:38  A total of 67 records were read from 2 files.
+ 16:31:38  NSEXIT: EXIT(0)
+ 16:31:38  Analysis complete  0
+0.42user 0.43system 0:08.70elapsed 9%CPU (0avgtext+0avgdata 4039648maxresident)k
+0inputs+0outputs (82major+253702minor)pagefaults 0swaps
+-----------------------------------------------------------------
+MSC.Nastran finished Tue Dec 22 16:31:38 CET 2015

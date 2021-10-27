@@ -1,0 +1,282 @@
+#!/bin/sh
+
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# set job settings
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+JOB="bars_start"
+JOBFILE="bars_start.bdf"
+INPUTFILES="/net/netapp3/AST/1_General/8_Mitarbeiter/Can/clique/bars_eigen/bars_start.bdf /net/netapp3/AST/1_General/8_Mitarbeiter/Can/clique/bars_eigen/bars_model.nas"
+RESULTFILES=" *.pch *.op2 *.f06 *.f04 *.log "
+TARGETDIR="/net/netapp3/AST/1_General/8_Mitarbeiter/Can/clique/bars_eigen"
+SYNC="N"
+
+#########################################################
+# AB HIER IST STANDALONE-TEMPLATE = DAKOTA-TEMPLATE
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# set solver settings
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+NAST_MEM="1000mb"
+NAST_BUFFSIZE="65537"
+NAST_VERSION="nast20051"
+NAST_OPTIONS=""
+
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# set queueing settings
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+EMAIL="UNDEFINED@puz.de"
+EMAILNOTIFY="n"
+echo "Please wait -- Checking required Licenses"
+#NAST_TOKENS="250"
+NAST_TOKENS=`CountNastranToken.pl $INPUTFILES` || NAST_TOKENS="250"
+NAST_AMLS=`CountAMLSToken.pl $INPUTFILES` || NAST_AMLS="0"
+#######################################################
+# JOB 1 : SOLVER RUN
+#######################################################
+
+cat <<EOF | qsub | tee job_1.log
+
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# Queuing System stuff, help with "man qsub"
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#$ -S /bin/sh
+#$ -M $EMAIL
+#$ -m $EMAILNOTIFY
+#$ -l mem_total=1250M
+#$ -l nas_tokens=$NAST_TOKENS
+#$ -l nas_amls=$NAST_AMLS
+#$ -hold_jid NONE
+#$ -q NAS
+#$ -o /net/netapp3/AST/1_General/8_Mitarbeiter/Can/clique/bars_eigen/$JOB.queue
+#$ -j y
+#$ -N $JOB
+#$ -pe NAS_MPI 1
+
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# Solver-dependent Pre-Work
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+datei_job=\`basename $JOBFILE\`
+
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# prepare basic location (no solver-dependency)
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+WORKDIR="/fs1/SCRATCH/$USER/$JOB.\$\$"
+echo '------------------------------'
+echo ' This job is running on'
+echo \`hostname\`
+echo ' in the basic working directory'
+echo \$WORKDIR
+echo '------------------------------'
+echo ''
+
+cd /
+rm -rf \$WORKDIR
+mkdir -p \$WORKDIR
+
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# copy input files (no solver-dependency)
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+echo '------------------------------'
+echo 'Copying input files...'
+echo '------------------------------'
+echo ''
+for file in $INPUTFILES;do
+    pfad=\`echo \$file | sed "s/\/[^/]*$//"\`
+    datei=\`basename \$file\`
+    if [ \$datei ==  \$datei_job ]
+    then
+       rechenpfad=\$pfad
+    fi
+    mkdir -p \$WORKDIR\$pfad
+    rsync -r -vz --bwlimit=0 -L \$file \$WORKDIR\$pfad
+    if [ \$datei == 'ALL_THINGS_IN_HERE' ]
+    then
+       rsync -r -vz --bwlimit=0 -L \$pfad'/' \$WORKDIR\$pfad'/'
+    fi
+done
+cd \$WORKDIR\$rechenpfad
+
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# place workdir infos in target dir (no solver-dependency)
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+EXEHOST=\`hostname | sed "s/\.local//"\`
+EXEHOSTDIR="/net/\$EXEHOST\$WORKDIR\$rechenpfad"
+EXEHOSTBASEDIR="/net/\$EXEHOST\$WORKDIR"
+
+#COPYINFO="COPY_$JOB.info"
+#COPYINFO2="BASEDIR_$JOB.info"
+#echo \$EXEHOSTDIR > \$COPYINFO
+#echo \$EXEHOSTBASEDIR > \$COPYINFO2
+#rsync -r -vz --bwlimit=0 \$COPYINFO $TARGETDIR
+#rsync -r -vz --bwlimit=0 \$COPYINFO2 $TARGETDIR
+
+ln -s \$EXEHOSTDIR $TARGETDIR/DIR_LINK__\${JOB_ID}__$JOB
+
+WD="$JOB.info"
+echo \`hostname\` > \$WD
+echo \$WORKDIR\$rechenpfad >> \$WD
+rsync -r -vz --bwlimit=0 \$WD $TARGETDIR
+
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# tell copy-job 
+#  + to use actual execution host (no solver-dependency)
+#  + the basic workdir on execution host
+#  + the actual workdir on execution host including the full path
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+COPYJOB_ID=( \$(cat $TARGETDIR/COPY_\${JOB_ID}.id) )
+#qalter \$COPYJOB_ID -l hostname=\$EXEHOST
+qalter -v "EXEHOSTDIR=\$EXEHOSTDIR,EXEHOSTBASEDIR=\$EXEHOSTBASEDIR" \$COPYJOB_ID
+
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# ANALYSIS
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+echo '------------------------------'
+echo ' Starting Solver'
+echo '------------------------------'
+
+ieight=0
+arrieight=("nast2005" "nast2005r3" "nast20051")
+if [ $NAST_VERSION ==  "nast2005" ]
+then
+	ieight=1 
+fi
+if [ $NAST_VERSION == "nast2005r3" ]
+then
+	ieight=1	
+fi
+if [ $NAST_VERSION == "nast20051" ]
+then
+	ieight=1	
+fi
+
+if [ \$ieight == 1 ]
+then
+    $NAST_VERSION $JOBFILE mem=$NAST_MEM notify=no sdirectory=\$WORKDIR\$rechenpfad scr=yes batch=no buffsize=$NAST_BUFFSIZE old=no authqueue=1000000 auth=1700@Llic3 $NAST_OPTIONS 
+else
+    $NAST_VERSION $JOBFILE mem=$NAST_MEM notify=no mode=i8 sdirectory=\$WORKDIR\$rechenpfad scr=yes batch=no buffsize=$NAST_BUFFSIZE old=no authqueue=1000000 auth=1700@Llic3 $NAST_OPTIONS 
+fi
+
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# POSTPROCESSING
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo '------------------------------'
+echo ' Starting Postprocessing'
+echo '------------------------------'
+
+
+
+echo ''
+echo 'Job execution finished on '\$EXEHOST
+echo ''
+
+rm $TARGETDIR/DIR_LINK__\${JOB_ID}__$JOB
+chmod 777 $TARGETDIR/*.queue
+
+echo '------------------------------'
+echo 'Starting Copy in separate Job'
+echo '------------------------------'
+echo 'Available Files are:'
+find .
+
+EOF
+
+# Job-ID ermitteln
+JID=`awk '{print $3}' job_1.log`
+
+#######################################################
+# JOB 2 : COPY RESULTS
+#######################################################
+
+cat <<EOF | qsub -C '##$' | tee job_2.log
+##$ -S /bin/sh
+##$ -M $EMAIL
+##$ -m $EMAILNOTIFY
+##$ -q COPY
+##$ -o $TARGETDIR/COPY_$JOB.queue
+##$ -j y
+##$ -N COPY_$JID
+##$ -hold_jid $JID
+
+#######################################################
+# JOB 2 : COPY RESULTS
+#######################################################
+
+echo '------------------------------'
+echo 'Copy results back...'
+echo '------------------------------'
+status=0
+COPYINFO="COPY_$JOB.info";
+COPYINFO2="BASEDIR_$JOB.info"
+#if [ -e $TARGETDIR/\$COPYINFO ]
+#then
+#    EXEHOSTDIR=( \$(cat $TARGETDIR/\$COPYINFO) )
+#    EXEHOSTBASEDIR=( \$(cat $TARGETDIR/\$COPYINFO2) )
+    cd \$EXEHOSTDIR
+    echo 'existing files'
+    ls -l
+    for file in $RESULTFILES;do
+    if [ -e \$file ]
+    then
+        echo 'copying' \$file
+        rsync -r -vz --bwlimit=0 \$file $TARGETDIR
+        if [ \$? == "0" ]
+        then
+            chmod 755 $TARGETDIR/\$file
+            orig=\`md5sum \$file | awk '{print \$1}'\`
+            copied=\`md5sum $TARGETDIR/\$file | awk '{print \$1}'\`
+            if [ "\$orig" != "\$copied" ]
+            then
+                status=1
+            fi
+        else
+            status=1
+        fi
+    fi
+    done
+    cd /
+    if [ \$status == 0 ]
+    then
+        rm -rf \$EXEHOSTBASEDIR
+    else
+        echo ''
+        echo '------------------------------'
+        echo 'Copying result files failed !'
+        echo 'Results saved in'\${EXEHOSTBASEDIR}_saved
+        echo '------------------------------'
+        echo ''
+        mv \$EXEHOSTDIR \${EXEHOSTBASEDIR}_saved
+    fi
+#else
+#echo '*** FAILED COPYING RESULTS ***'
+#echo "    Results path information file $TARGETDIR/\$COPYINFO not found"
+#fi
+
+chmod 777 $TARGETDIR/*.queue
+if [ $SYNC == "Y" ] 
+then
+   touch $TARGETDIR/FINISHED_$JID
+fi
+EOF
+
+# Job-ID ermitteln
+COPY_JID=`awk '{print $3}' job_2.log`
+echo "$COPY_JID" > $TARGETDIR/COPY_$JID.id
+echo "Results of job $JID will be copied back by job $COPY_JID"
+
+rm job_1.log
+rm job_2.log
+
+# Shell ggf sperren, solange Kopierjob noch nicht abgeschlossen
+if [ $SYNC == "Y" ] 
+then
+   echo 'Waiting for job + copy to finish'
+   while [ ! -e $TARGETDIR/FINISHED_$JID ]; do
+      sleep 60
+   done
+   rm $TARGETDIR/FINISHED_$JID
+fi

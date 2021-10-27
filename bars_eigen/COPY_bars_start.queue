@@ -1,0 +1,40 @@
+Cannot open display "default display"
+/na/home/can/.bashrc: line 49: /na/share/theseus/tools/intel/Compiler/11.1/080/bin/iccvars.sh: Datei oder Verzeichnis nicht gefunden
+Cannot open display "default display"
+/na/home/can/.bashrc: line 49: /na/share/theseus/tools/intel/Compiler/11.1/080/bin/iccvars.sh: Datei oder Verzeichnis nicht gefunden
+------------------------------
+Copy results back...
+------------------------------
+existing files
+insgesamt 200
+-rwxrwxrwx 1 can pz  1719 22. Dez 16:31 bars_model.nas
+-rwxrwxrwx 1 can pz   550 22. Dez 16:31 bars_start.bdf
+-rw-rw-rw- 1 can pz 45415 22. Dez 16:31 bars_start.f04
+-rw-rw-rw- 1 can pz 34195 22. Dez 16:31 bars_start.f06
+-rw-rw-rw- 1 can pz   105 22. Dez 16:31 bars_start.info
+-rw-rw-rw- 1 can pz  5408 22. Dez 16:31 bars_start.log
+-rwxrwxrwx 1 can pz 92772 22. Dez 16:31 bars_start.op2
+copying bars_start.op2
+building file list ... done
+bars_start.op2
+
+sent 11722 bytes  received 42 bytes  23528.00 bytes/sec
+total size is 92772  speedup is 7.89
+copying bars_start.f06
+building file list ... done
+bars_start.f06
+
+sent 6806 bytes  received 42 bytes  13696.00 bytes/sec
+total size is 34195  speedup is 4.99
+copying bars_start.f04
+building file list ... done
+bars_start.f04
+
+sent 6446 bytes  received 42 bytes  12976.00 bytes/sec
+total size is 45415  speedup is 7.00
+copying bars_start.log
+building file list ... done
+bars_start.log
+
+sent 1998 bytes  received 42 bytes  4080.00 bytes/sec
+total size is 5408  speedup is 2.65

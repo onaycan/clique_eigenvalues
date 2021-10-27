@@ -1,0 +1,54 @@
+Cannot open display "default display"
+/na/home/can/.bashrc: line 49: /na/share/theseus/tools/intel/Compiler/11.1/080/bin/iccvars.sh: Datei oder Verzeichnis nicht gefunden
+Cannot open display "default display"
+/na/home/can/.bashrc: line 49: /na/share/theseus/tools/intel/Compiler/11.1/080/bin/iccvars.sh: Datei oder Verzeichnis nicht gefunden
+------------------------------
+ This job is running on
+linux361
+ in the basic working directory
+/fs1/SCRATCH/can/bars_start.26390
+------------------------------
+
+------------------------------
+Copying input files...
+------------------------------
+
+sending incremental file list
+bars_start.bdf
+
+sent 398 bytes  received 31 bytes  858.00 bytes/sec
+total size is 550  speedup is 1.28
+sending incremental file list
+bars_model.nas
+
+sent 339 bytes  received 31 bytes  740.00 bytes/sec
+total size is 1719  speedup is 4.65
+sending incremental file list
+bars_start.info
+
+sent 174 bytes  received 31 bytes  410.00 bytes/sec
+total size is 105  speedup is 0.51
+modified environment of job 96023
+------------------------------
+ Starting Solver
+------------------------------
+MSC.Nastran V2005.1 (Intel Linux 2.6.18-274.el5) Tue Dec 22 16:31:29 2015
+MSC.Nastran beginning job bars_start.
+------------------------------
+ Starting Postprocessing
+------------------------------
+
+Job execution finished on linux361
+
+------------------------------
+Starting Copy in separate Job
+------------------------------
+Available Files are:
+.
+./bars_start.f06
+./bars_start.info
+./bars_start.f04
+./bars_model.nas
+./bars_start.log
+./bars_start.bdf
+./bars_start.op2
